@@ -1,0 +1,2 @@
+# Library-Information-System
+This project is to complete a library information system. The library information system will be able to help students to search, borrow, return books,  check the books on loan, and look over the violation records. This system can also help the librarian to search books, add books, clear books, modify books information and look over the student information. The system allows users to register, log in and clear accounts as well.
