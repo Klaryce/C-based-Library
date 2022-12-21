@@ -1,6 +1,6 @@
 # A Library System
 
-**Options for student accounts**
+**Functions for student accounts**
 
 a. Search books
 
@@ -14,7 +14,7 @@ e. Check violation records
 
 f. Log out <br/>
 
-**Options for librarian accounts**
+**Functions for librarian accounts**
 
 a. Search books
 
