@@ -1,4 +1,4 @@
-# Library System
+# A Library System
 
 **Options for student accounts**
 
@@ -12,7 +12,7 @@ d. Check books on loan
 
 e. Check violation records
 
-f. Log out
+f. Log out <br/>
 
 **Options for librarian accounts**
 
