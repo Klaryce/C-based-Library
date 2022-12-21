@@ -4,11 +4,7 @@
 #include "structure.h"
 #include "identity.h"
 
-#define SAME 1
-#define DIFF 0
-
-int avail = SAME;
-
+//used for a student to register
 void studentRegister(Student *head)
 {
 
@@ -18,38 +14,45 @@ void studentRegister(Student *head)
 
 
     //get the user name
-    printf("Please enter your user name: ");
+    printf("Please enter your username: ");
     scanf("%s", username);
 
-
+    //declare a Student pointer and make it point to head
     Student *node = head;
-    //printf("%s\n",username);
-    //printf("%s\n",head->username);
-    //printf("%d\n",strcmp(username, node->username));
 
     //judge if the user name is new
     do
-    {
+     {
+        //if the input username is same as the traversed username
         if (strcmp(username, node->username) == 0)
-        {
-            printf("The user name has already been used! Please type in an available user name: ");
+          {
+            //ask for a new username
+            printf("The username has been already used! Please type in an available username: ");
             scanf("%s", username);
+
+            //start traversing from the beginning
             node = head;
-        }
-
+          }
+        //if it is not the last node and hasn't found an identical username yet
         else if(node->next_student != NULL)
-        {
+          {
+            //make the pointer point to the next node 
             node = node->next_student;
-        }
+          }
+        //if it is the last node and hasn't found an identical username yet
+        else
+          {
+            //exit the loop
+            break;
+          }
+    //keep traversing if the node exists
+    }while(node != NULL);
 
-    }while(node->next_student != NULL);
-
+    //ask for a password
     printf("Please enter your password: ");
     scanf("%s", password);
 
-
-
-     //Declare a structure
+    //Declare a Student node and allocate memory for it
     Student *newone = studentNode();
 
     //Initialization
@@ -62,128 +65,99 @@ void studentRegister(Student *head)
     newone->next_student = NULL;
     node->next_student = newone;
 
+    //copy the username and password to the node
     strcpy(newone->username, username);
     strcpy(newone->password, password);
-
-
-
-    /*FILE *fp;
-
-    if((fp = fopen("student.txt", "a")) == NULL)
-    {
-        printf("Fail to open the file.\n");
-        return;
-    }
-
-    fputs(newone.username, fp);
-    fputs("\n", fp);
-    fputs(newone.password, fp);
-    fputs("\n", fp);
-    fprintf(fp, "%d\n", newone.onloan_book1);
-    fprintf(fp, "%d\n", newone.onloan_book2);
-    fprintf(fp, "%d\n", newone.onloan_book3);
-
-    fclose(fp);*/
 }
 
 Student *studentLogin(Student *head)
 {
+    //Declare a Student pointer
     Student *user;
 
+    //Declare and initialize the variables
     char username[SMALLSIZE] = "";
     char password[SMALLSIZE] = "";
     int found = 0;
-    int choice = 0;
 
-    printf("Please enter your user name: ");
+    //ask for a username
+    printf("Please enter your username: ");
     scanf("%s", username);
 
+    //declare a Student pointer
     Student *ptr;
+
+    //traverse the student linked list
     for(ptr = head; ptr != NULL; ptr = ptr->next_student)
-    {
+     {
+        //judge if the username is same as input
         if(strcmp(ptr->username, username) == 0)
-        {
+          {
+            //assign 1 to the marked variable
             found = 1;
+
+            //exit the loop
             break;
-        }
-    }
+          }
+     }
+
+    //while no username is found to be same as the input
     while(found == 0)
-    {
-        choice = 1;
-        printf("The user name hasn't been registered yet!\nPlease register first. Enter 1 to try another user name.\n");
-        getchar();
-        scanf("%d", &choice);
-        if (choice == 1)
-        {
-            scanf("%s", username);
-            for(ptr = head; ptr != NULL; ptr = ptr->next_student)
-            {
-                if(strcmp(ptr->username, username) == 0)
-                {
-                    found = 1;
-                    //printf("test 1\n");
-                    break;
-                }
-            }
-            if(found == 1)
-            {
-                //printf("test 2\n");
+     {
+        //print the error message and ask for a new username
+        printf("The username hasn't been registered yet!\nPlease try another username. \n");
+        scanf("%s", username);
+
+        //traverse the student loop to look for the identical username again
+        for(ptr = head; ptr != NULL; ptr = ptr->next_student)
+          {
+            //judge if the username is same as input
+            if(strcmp(ptr->username, username) == 0)
+               {
+                //assign 1 to the marked variable
+                found = 1;
+
+                //exit the loop
                 break;
-            }
-        }
-        //printf("%d\n",found);
-    }
+               }
+          }
+     }
+    //if the username is found
     if(found == 1)
-    {
+     {
+        //ask for a password
         printf("Please enter your password: ");
         scanf("%s", password);
+
+        //if the input password is same as the required password
         if(strcmp(ptr->password, password) == 0)
-        {
+          {
+            //let the pointer which indicates the current user point to the node
             user = ptr;
-        }
+          }
+        //if the input password is different from the required password
         else
-        {
+          {
+            //while the password is incorrect
             while(strcmp(ptr->password, password) != 0)
-            {
+               {
+                //ask for a new password
                 printf("The password is wrong. Please type in again: ");
                 scanf("%s", password);
-            }
+               }
+            //let the pointer which indicates the current user point to the node after the user enters the correct password
             user = ptr;
-        }
-    }
+          }
+     }
+    //return the node of the current user
     return user;
 }
 
-void studentMenu(Book *bookhead, Student *user, Student *student_head)
-{
-    int choice = 1;
 
-    while(choice != 7)
-    {
-        printf("1.  Search books\n2.  Borrow books\n3.  Return books\n4.  Borrowed records\n");
-        printf("5.  Books on loan\n6.  Violation records\n7.  Log out\nEnter the corresponding number.\n");
-        scanf("%d", &choice);
-        switch(choice)
-        {
-            case 1:   searchBook(bookhead);
-                        continue;
-
-            case 2:   borrowBook(bookhead, user, student_head);
-                        continue;
-
-            case 3:   returnBook(user, bookhead, student_head);
-                        continue;
-
-            case 6:   violation(user);
-                        continue;
-
-        }
-    }
-
-}
-
+//used for the student to search a book
 int searchBook(Book *bookhead)
 {
+    //declare and initialize variables
     int choice;
     int found = 0;
     int i = 0;
@@ -194,94 +168,125 @@ int searchBook(Book *bookhead)
     Book *ptr;
     Book *storing[BIGSIZE];
 
-    printf("1.	Search by title\n2.	Search by author\n3.	Search by category\n4.	Back to menu\nEnter the corresponding number.\n");
+    //print the choices
+    printf("1.	Search by title\n2.	Search by author\n3.	Search by category\nEnter the corresponding number. Enter other numbers to go back to the menu.\n");
     scanf("%d", &choice);
 
-
+    //if search by title
     if(choice == 1)
-    {
+     {
+        //ask for a title
         printf("Please enter the title: ");
         scanf("%s", title);
+
+        //traverse to find the books which have the input title
         for(ptr = bookhead; ptr != NULL; ptr = ptr->next_book)
-        {
+          {
+            //if the book has the same title
             if((strcmp(ptr->title, title)) == 0)
-            {
+                {
+                //assign 1 to the marked variable
                 found = 1;
+
+                //store the node into the array
                 storing[i] = ptr;
                 i++;
-            }
-        }
+                 }
+           }
+        //if no book is found
         if(found == 0)
-        {
+          {
+            //print the error message
             printf("No books fit the bill.\n");
             return 0;
-        }
+           }
 
-    }
+      }
+    //if search by author
     if(choice == 2)
-    {
+     {
+        //ask for an author's name
         printf("Please enter the author's name: ");
         scanf("%s", author);
+
+        //traverse to find the books which have the input author's name
         for(ptr = bookhead; ptr != NULL; ptr = ptr->next_book)
-        {
+          {
+            //if the book has the same author
             if((strcmp(ptr->author, author)) == 0)
-            {
+               {
+                //assign 1 to the marked variable
                 found = 1;
+
+                //store the node into the array
                 storing[i] = ptr;
                 i++;
-            }
-        }
+               }
+          }
+        //if no book is found
         if(found == 0)
-        {
+          {
             printf("No books fit the bill.\n");
             return 0;
-        }
-
-    }
+          }
+      }
+    //if search by category
     if(choice == 3)
-    {
+     {
+        //ask for a category
         printf("Please enter the category: ");
         scanf("%s", category);
+
+        //traverse to find the books which have the same category name
         for(ptr = bookhead; ptr != NULL; ptr = ptr->next_book)
-        {
+          {
+            //if the book has the same category name
             if((strcmp(ptr->category, category)) == 0)
-            {
+               {
+                //assign 1 to the marked variable
                 found = 1;
+
+                //store the node into the array
                 storing[i] = ptr;
                 i++;
-            }
-        }
+               }
+          }
+        //if no book is found
         if(found == 0)
-        {
+          {
             printf("No books fit the bill.\n");
             return 0;
-        }
-
-    }
+          }
+     }
+    //if found some books
     if(found == 1)
-    {
+     {
+        //traverse the array to print out the information about all founded books
         for(j = 0; j < i; j++)
-        {
+          {
             printf("Title: %s\n", storing[j]->title);
             printf("Author: %s\n", storing[j]->author);
             printf("Category: %s\n", storing[j]->category);
             printf("Book number: %d\n", storing[j]->book_number);
+
+            //if the book is stay in the library
             if(strcmp(storing[j]->bookstatus.username, "no") == 0)
-            {
+               {
                 printf("Status: stay\n\n");
-            }
+               }
+            //if the book is on loan by someone
             else
-            {
+               {
                 printf("Status: on loan\n\n");
-            }
-        }
-    }
+               }
+          }
+     }
     return 0;
 }
 
 int borrowBook(Book *bookhead, Student *user, Student *student_head)
 {
-
+    //declare and initialize variables
     int inputbook;
     Book *ptr;
     Student *stu;
@@ -289,206 +294,173 @@ int borrowBook(Book *bookhead, Student *user, Student *student_head)
     int choice;
     int borrow = 0;
 
-    /*ptr = bookhead;
-    ptr++;
-    printf("%d\n",ptr->book_number);*/
-
+    //ask for a book number
     printf("Please enter the book number: ");
     scanf("%d", &inputbook);
-    //find the book number
+
+    //traverse to find the book number
     for(ptr = bookhead; ptr != NULL; ptr = ptr->next_book)
-    {
-        printf("test 1\n");
+     {
         if(ptr->book_number == inputbook)
-        {
+          {
             found = 1;
             break;
-        }
-    }
+          }
+     }
+    //if no book number is found
     while(found == 0)
-    {
+     {
+        //ask for a chocie
         printf("Invalid book number!\nEnter 1 to type in again.\nEnter 2 to go back to menu.\n");
         scanf("%d", &choice);
+
+        //if type in again
         if(choice == 1)
-        {
+          {
+            //read the input book number
             scanf("%d", &inputbook);
-            //find the book number
-            for(ptr = bookhead; ptr != NULL; ptr++)
-            {
+
+            //traverse to find the book number
+            for(ptr = bookhead; ptr != NULL; ptr = ptr->next_book)
+               {
                 if(ptr->book_number == inputbook)
-                {
+                    {
                     found = 1;
                     break;
+                    }
                 }
-            }
-        }
+          }
+        //if go back to menu
         if(choice == 2)
-        {
-            return 0;//menu
-        }
-    }
+          {
+            return 0;
+          }
+      }
+    //if the book is found
     if(found == 1)
-    {
-        printf("found == 1\n");
-        printf("%s\n", user->username);
+     {
+        //if the book is on loan by someone
         if((strcmp(ptr->bookstatus.username, "no")) != 0)
-        {
-            printf("The book is on loan.\nEnter 1 to go back to menu.\n");
-            scanf("%d", &choice);
-            if(choice == 1)
-            {
-                return 0;
-            }
-        }
-        //check if have borrowed 3 and store the book number
-        else if(user->onloan_book1 == 0)
-        {
-            user->onloan_book1 = ptr->book_number;
-            borrow = 1;
-            strcpy(ptr->bookstatus.username, user->username);
-        }
-        else if(user->onloan_book2 == 0)
-        {
-            user->onloan_book2 = ptr->book_number;
-            borrow = 1;
-            strcpy(ptr->bookstatus.username, user->username);
-        }
-        else if(user->onloan_book3 == 0)
-        {
-            user->onloan_book3 = ptr->book_number;
-            borrow = 1;
-            strcpy(ptr->bookstatus.username, user->username);
-        }
+          {
+            printf("The book is on loan.\n");
+          }
+
+        //if the book is stay in the library
         else
-        {
-            printf("You are allowed to have three books on loan at most.\nEnter 1 to go back to menu.\n");
-            scanf("%d", &choice);
-            if(choice == 1)
-            {
-                return 0;//menu
-            }
-        }
+          {
+            //print out the information about the book
+		printf("Title: %s\n", ptr->title);
+		printf("Author: %s\n", ptr->author);
+		printf("Category: %s\n", ptr->category);
 
-        if(borrow == 1)
-        {
-            time_t timep;
-            struct tm *p;
-            time(&timep);
-            p = localtime(&timep);
+            //ask for a choice
+		printf("Enter 1 to borrow this book. Enter other numbers to go back to the menu.\n");
+		scanf("%d", &choice);
 
-            ptr->bookstatus.borrowed_time.year = 1900 + p->tm_year;
-            ptr->bookstatus.borrowed_time.month = 1 + p->tm_mon;
-            ptr->bookstatus.borrowed_time.day = p->tm_mday;
-            ptr->bookstatus.borrowed_time.yday = p->tm_yday;
+            //if choose to borrow
+		if(choice == 1)
+		{
+                   //check if there is any chance for the user to borrow a book and store the book number into student information
+			if(user->onloan_book1 == 0)
+        		{
+            		user->onloan_book1 = ptr->book_number;
+            		borrow = 1;
+        		}
+        		else if(user->onloan_book2 == 0)
+        		{
+            		user->onloan_book2 = ptr->book_number;
+            		borrow = 1;
+        		}
+        		else if(user->onloan_book3 == 0)
+        		{
+            		user->onloan_book3 = ptr->book_number;
+            		borrow = 1;
+        		}
+        		else
+        		{
+            		printf("You are allowed to have three books on loan at most.\n");
 
-            strcpy(ptr->bookstatus.username, user->username);
+        		}
+                   //if the student has a chance to borrow it
+			if(borrow == 1)
+			{
+                         //attain the borrowed time
+            		time_t timep;
+            		struct tm *p;
+            		time(&timep);
+            		p = localtime(&timep);
 
-            /*FILE *fp_s;
-            FILE *fp_b;
+                         //store the borrowed time into the book information
+           	 		ptr->bookstatus.borrowed_time.year = 1900 + p->tm_year;
+           	 		ptr->bookstatus.borrowed_time.month = 1 + p->tm_mon;
+         	   		ptr->bookstatus.borrowed_time.day = p->tm_mday;
+          	  		ptr->bookstatus.borrowed_time.yday = p->tm_yday;
 
-            if((fp_s = fopen("student.txt", "w")) == NULL)
-            {
-                printf("Fail to open the file.\n");
-                return 0;
-            }
-            for(stu = student_head; stu != NULL; stu = stu->next_student)
-            {
-                fputs(stu->username, fp_s);
-                fputs("\n", fp_s);
-                fputs(stu->password, fp_s);
-                fputs("\n", fp_s);
-                fprintf(fp_s, "%d\n", stu->onloan_book1);
-                fprintf(fp_s, "%d\n", stu->onloan_book2);
-                fprintf(fp_s, "%d\n", stu->onloan_book3);
-            }
-            fclose(fp_s);
-
-            if((fp_b = fopen("book.txt", "w")) == NULL)
-            {
-                printf("Fail to open the file.\n");
-                return 0;
-            }
-
-            for(ptr = bookhead; ptr != NULL; ptr = ptr->next_book)
-            {
-                fputs(ptr->title, fp_b);
-                fputs("\n", fp_b);
-                fputs(ptr->author, fp_b);
-                fputs("\n", fp_b);
-                fputs(ptr->category, fp_b);
-                fputs("\n", fp_b);
-                fprintf(fp_b, "%d\n", ptr->book_number);
-                fprintf(fp_b, "%d\n", ptr->bookstatus.borrowed_time.year);
-                fprintf(fp_b, "%d\n", ptr->bookstatus.borrowed_time.month);
-                fprintf(fp_b, "%d\n", ptr->bookstatus.borrowed_time.day);
-                fprintf(fp_b, "%d\n", ptr->bookstatus.borrowed_time.yday);
-                fprintf(fp_b, "%d\n", ptr->bookstatus.returned_time.year);
-                fprintf(fp_b, "%d\n", ptr->bookstatus.returned_time.month);
-                fprintf(fp_b, "%d\n", ptr->bookstatus.returned_time.day);
-                fprintf(fp_b, "%d\n", ptr->bookstatus.returned_time.yday);
-                fputs(ptr->bookstatus.username, fp_b);
-                fputs("\n", fp_b);
-            }
-
-            fclose(fp_b);*/
-        }
-    }
+                         //store the username into the book information
+            		strcpy(ptr->bookstatus.username, user->username);
+			}
+		 }
+           }
+     }
     return 0;
 }
 
+//used for the student to return a book
 void returnBook(Student *user, Book *bookhead, Student *student_head)
 {
+    //declare and initialize variables
     int book_number;
     int found = 0;
     Book *ptr;
     Student *stu;
 
+    //ask for a book number
     printf("Please enter the book number: ");
     scanf("%d", &book_number);
 
+    //traverse the information about on loan book number in the student information and set the on loan book number to 0
     if(user->onloan_book1 == book_number)
-    {
+     {
         found = 1;
         user->onloan_book1 = 0;
-    }
+     }
     else if(user->onloan_book2 == book_number)
-    {
+     {
         found = 1;
         user->onloan_book2 = 0;
-    }
+     }
     else if(user->onloan_book3 == book_number)
-    {
+     {
         found = 1;
         user->onloan_book3 = 0;
-    }
+     }
+    //if not find the book number
     else
-    {
+     {
         printf("You didn't borrow this book!\n");
-    }
+     }
 
-    //printf("test 1\n");
+    //if found the book
     if(found == 1)
-    {
-        //printf("test 2\n");
+     {
+        //traverse the book linked list
         for(ptr = bookhead; ptr != NULL; ptr = ptr->next_book)
-        {
-            //printf("test 3\n");
+          {
+            //if the book is found
             if(ptr->book_number == book_number)
-            {
-                //printf("test 4\n");
+               {
+                //set the username to "no"
                 strcpy(ptr->bookstatus.username, "no");
 
-                //printf("test 5\n");
+                //attain the system time
                 time_t timeq;
                 struct tm *q;
-                //返回当前日历的时间（秒数）存储到timeq里面
                 time(&timeq);
-                //把秒数换算成时间存储到结构q里面
                 q = localtime(&timeq);
 
+                //declare variables
                 struct tm *p;
                 time_t timep;
-
 
                 int borrowed_year;
                 int borrowed_month;
@@ -501,125 +473,131 @@ void returnBook(Student *user, Book *bookhead, Student *student_head)
                 int ontime = 0;
 
                 double passtime;
-                //printf("test 6\n");
-                ptr->bookstatus.returned_time.year = 1900 + q->tm_year;
-                ptr->bookstatus.returned_time.month = 1 + q->tm_mon;
-                ptr->bookstatus.returned_time.day = q->tm_mday;
 
-                //printf("test 7\n");
+                //assign the system time to the returned time
+                returned_year = 1900 + q->tm_year;
+                returned_month = 1 + q->tm_mon;
+                returned_yday = q->tm_yday;
 
+                //assign the borrowed time from the node to variables
                 borrowed_year = ptr->bookstatus.borrowed_time.year;
                 borrowed_month = ptr->bookstatus.borrowed_time.month;
                 borrowed_yday = ptr->bookstatus.borrowed_time.yday;
-                returned_year = ptr->bookstatus.returned_time.year;
-                returned_month = ptr->bookstatus.returned_time.month;
-                returned_yday = q->tm_yday;
 
-                //printf("test 8\n");
+                //if borrow and return in the same year
                 if(borrowed_year == returned_year)
-                {
+                    {
                     if(returned_yday - borrowed_yday <= 60)
-                    {
+                          {
                         ontime = 1;
+                          } 
                     }
-                }
+                //if return in the next year
                 if(borrowed_year == returned_year - 1)
-                {
+                    {
+                    //if borrow in a leap year
                     if(((borrowed_year % 4 == 0)&&(borrowed_year % 100 != 0))||(borrowed_year % 400 == 0))
-                    {
+                          {
+                        //if the time between the borrowing and returning is within or equal to 60 days
                         if(((366 - borrowed_yday) + returned_yday) <= 60)
-                        {
+                               {
                             ontime = 1;
-                        }
-                    }
+                               }
+                          }
+                    //if borrow in a simple year
                     else
-                    {
+                          {
+                        //if the time between the borrowing and returning is within or equal to 60 days
                         if(((365 - borrowed_yday) + returned_yday) <= 60)
-                        {
+                               {
                             ontime = 1;
-                        }
-                    }
-                }
-                //printf("test 9\n");
-
+                               }
+                           }
+                     }
+                //if return on time
                 if(ontime == 1)
-                {
-                    printf("ontime\n");
-                }
+                    {
+                    printf("Returned on time!\n");
+                    }
+                //if return late
                 else
-                {
+                    {
+                    printf("Late!\n");
                     user->violation++;
-                }
-                //printf("test 10\n");
-
-
-            /*FILE *fp_s;
-            FILE *fp_b;
-
-            if((fp_s = fopen("student.txt", "w")) == NULL)
-            {
-                printf("Fail to open the file.\n");
-                return;
-            }
-            for(stu = student_head; stu != NULL; stu = stu->next_student)
-            {
-                fputs(stu->username, fp_s);
-                fputs("\n", fp_s);
-                fputs(stu->password, fp_s);
-                fputs("\n", fp_s);
-                fprintf(fp_s, "%d\n", stu->onloan_book1);
-                fprintf(fp_s, "%d\n", stu->onloan_book2);
-                fprintf(fp_s, "%d\n", stu->onloan_book3);
-            }
-            fclose(fp_s);
-
-            if((fp_b = fopen("book.txt", "w")) == NULL)
-            {
-                printf("Fail to open the file.\n");
-                return;
-            }
-            for(ptr = bookhead; ptr != NULL; ptr = ptr->next_book)
-            {
-                fputs(ptr->title, fp_b);
-                fputs("\n", fp_b);
-                fputs(ptr->author, fp_b);
-                fputs("\n", fp_b);
-                fputs(ptr->category, fp_b);
-                fputs("\n", fp_b);
-                fprintf(fp_b, "%d\n", ptr->book_number);
-                fprintf(fp_b, "%d\n", ptr->bookstatus.borrowed_time.year);
-                fprintf(fp_b, "%d\n", ptr->bookstatus.borrowed_time.month);
-                fprintf(fp_b, "%d\n", ptr->bookstatus.borrowed_time.day);
-                fprintf(fp_b, "%d\n", ptr->bookstatus.returned_time.year);
-                fprintf(fp_b, "%d\n", ptr->bookstatus.returned_time.month);
-                fprintf(fp_b, "%d\n", ptr->bookstatus.returned_time.day);
-                fputs(ptr->bookstatus.username, fp_b);
-                fputs("\n", fp_b);
-            }
-            fclose(fp_b);*/
+                    }
                 break;
-            }
-        }
-    }
+               }
+          }
+     }
 }
 
+//used to look for the books on loan by the student
 void bookOnLoan(Student *user, Book *bookhead)
 {
+    //declare variables
     Book *ptr;
+    int found = 0;
 
-    for(ptr = bookhead; ptr != NULL; ptr++)
-    {
-        if(ptr->book_number == user->onloan_book1)||(ptr->book_number == user->onloan_book2)||(ptr->book_number == user->onloan_book3)
-        {
+    //traverse the book linked list
+    for(ptr = bookhead; ptr != NULL; ptr = ptr->next_book)
+     {
+        //if the book is on loan by the student
+        if(((ptr->book_number == user->onloan_book1)||(ptr->book_number == user->onloan_book2)||(ptr->book_number == user->onloan_book3))&&(ptr->book_number != 0))
+          {
+            //print the information about the book
             printf("Title: %s\n", ptr->title);
             printf("Author: %s\n", ptr->author);
             printf("Category: %s\n", ptr->category);
             printf("Book Number: %d\n", ptr->book_number);
-        }
-    }
+            found = 1;
+          }
+      }
+    //if no books are found on loan by the student
+    if(found == 0)
+     {
+        printf("You have no books on loan!\n");
+      }
 }
 
+//used to check the violation record
 void violation(Student *user)
 {
     printf("You have a record of %d violations.\n", user->violation);
+}
+
+//menu used for the student
+void studentMenu(Book *bookhead, Student *user, Student *student_head)
+{
+    //declare a variable
+    int choice = 0;
+
+    //while not logging out
+    while(choice != 6)
+     {
+        //print menu
+        printf("1.  Search books\n2.  Borrow books\n3.  Return books\n");
+        printf("4.  Books on loan\n5.  Violation records\n6.  Log out\nEnter the corresponding number.\n");
+
+        //ask for a choice
+        scanf("%d", &choice);
+
+        //call corresponding functions according to the choice
+        switch(choice)
+          {
+            case 1:   searchBook(bookhead);
+                        continue;
+
+            case 2:   borrowBook(bookhead, user, student_head);
+                        continue;
+
+            case 3:   returnBook(user, bookhead, student_head);
+                        continue;
+
+            case 4:   bookOnLoan(user, bookhead);
+                        continue;
+
+            case 5:   violation(user);
+                        continue;
+          }
+     }
 }

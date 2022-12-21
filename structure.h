@@ -16,7 +16,6 @@ struct time
 struct status
 {
     struct time borrowed_time;
-    struct time returned_time;
     char username[SMALLSIZE];
 };
 
@@ -32,11 +31,6 @@ struct book
 
 typedef struct book Book;
 
-/*struct record
-{
-    int book;
-    struct record *next;
-};*/
 
 struct student
 {
@@ -46,7 +40,6 @@ struct student
     int onloan_book1;
     int onloan_book2;
     int onloan_book3;
-    //struct book *book[3];
     int violation;
     struct student *next_student;
 };

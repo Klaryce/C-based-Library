@@ -15,5 +15,6 @@ void cleanStudentTail(Student *head);
 void saveStudent(Student *student_head);
 void saveBook(Book *bookhead);
 void freeStudent(Student *node);
+void freeBook(Book *node);
 
 #endif // IDENTITY_H_INCLUDED
