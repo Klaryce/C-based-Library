@@ -1,4 +1,4 @@
-# A Library System
+# C-based Library Practice
 
 **Functions for student accounts**
 
